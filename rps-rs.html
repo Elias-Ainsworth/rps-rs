@@ -349,24 +349,24 @@ margin: 2em 0;
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org5072e6b">1. Installation</a>
+<li><a href="#org3012776">1. Installation</a>
 <ul>
-<li><a href="#org2437b66">1.1. Source</a></li>
-<li><a href="#orge5ee048">1.2. Nix</a></li>
+<li><a href="#org20e8fcc">1.1. Source</a></li>
+<li><a href="#org429531c">1.2. Nix</a></li>
 </ul>
 </li>
-<li><a href="#org4608039">2. Usage</a></li>
-<li><a href="#orga33ac77">3. The Code</a>
+<li><a href="#orge530816">2. Usage</a></li>
+<li><a href="#org5a8fba5">3. The Code</a>
 <ul>
-<li><a href="#orga0fcdac">3.1. Cargo.toml</a></li>
-<li><a href="#org9269293">3.2. state.rs</a></li>
-<li><a href="#org1b084e9">3.3. hand.rs</a></li>
-<li><a href="#orge8d41f3">3.4. mode.rs</a></li>
-<li><a href="#orgaff9f36">3.5. lib.rs</a></li>
-<li><a href="#orgeba257b">3.6. main.rs</a></li>
+<li><a href="#orge950087">3.1. Cargo.toml</a></li>
+<li><a href="#orgcad375c">3.2. state.rs</a></li>
+<li><a href="#orgbf862de">3.3. hand.rs</a></li>
+<li><a href="#org0c516c7">3.4. mode.rs</a></li>
+<li><a href="#org064cdcb">3.5. lib.rs</a></li>
+<li><a href="#org6b5ad19">3.6. main.rs</a></li>
 </ul>
 </li>
-<li><a href="#org3476031">4. Demo</a></li>
+<li><a href="#org1d4b407">4. Demo</a></li>
 </ul>
 </div>
 </div>
@@ -378,12 +378,12 @@ a wildly overbuilt Rock, Paper, Scissors.
 <p>
 I get extra-credit for this right? 😭
 </p>
-<div id="outline-container-org5072e6b" class="outline-2">
-<h2 id="org5072e6b"><span class="section-number-2">1.</span> Installation</h2>
+<div id="outline-container-org3012776" class="outline-2">
+<h2 id="org3012776"><span class="section-number-2">1.</span> Installation</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-org2437b66" class="outline-3">
-<h3 id="org2437b66"><span class="section-number-3">1.1.</span> Source</h3>
+<div id="outline-container-org20e8fcc" class="outline-3">
+<h3 id="org20e8fcc"><span class="section-number-3">1.1.</span> Source</h3>
 <div class="outline-text-3" id="text-1-1">
 <ol class="org-ol">
 <li><p>
@@ -417,8 +417,8 @@ Run the compiled binary:
 </ol>
 </div>
 </div>
-<div id="outline-container-orge5ee048" class="outline-3">
-<h3 id="orge5ee048"><span class="section-number-3">1.2.</span> Nix</h3>
+<div id="outline-container-org429531c" class="outline-3">
+<h3 id="org429531c"><span class="section-number-3">1.2.</span> Nix</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 If you have nix installed, you can run this program without any
@@ -439,8 +439,8 @@ this unless you really like installing bad cli games).
 </div>
 </div>
 </div>
-<div id="outline-container-org4608039" class="outline-2">
-<h2 id="org4608039"><span class="section-number-2">2.</span> Usage</h2>
+<div id="outline-container-orge530816" class="outline-2">
+<h2 id="orge530816"><span class="section-number-2">2.</span> Usage</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 After running the program using it is pretty intuitive. You're
@@ -459,12 +459,12 @@ of the results after each round&#x2026;honestly nothing special.
 </p>
 </div>
 </div>
-<div id="outline-container-orga33ac77" class="outline-2">
-<h2 id="orga33ac77"><span class="section-number-2">3.</span> The Code</h2>
+<div id="outline-container-org5a8fba5" class="outline-2">
+<h2 id="org5a8fba5"><span class="section-number-2">3.</span> The Code</h2>
 <div class="outline-text-2" id="text-3">
 </div>
-<div id="outline-container-orga0fcdac" class="outline-3">
-<h3 id="orga0fcdac"><span class="section-number-3">3.1.</span> Cargo.toml</h3>
+<div id="outline-container-orge950087" class="outline-3">
+<h3 id="orge950087"><span class="section-number-3">3.1.</span> Cargo.toml</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 Rust's package manager is Cargo and in this assignment I used a total
@@ -488,8 +488,8 @@ of 2 crates:
 </div>
 </div>
 </div>
-<div id="outline-container-org9269293" class="outline-3">
-<h3 id="org9269293"><span class="section-number-3">3.2.</span> state.rs</h3>
+<div id="outline-container-orgcad375c" class="outline-3">
+<h3 id="orgcad375c"><span class="section-number-3">3.2.</span> state.rs</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
 This file includes an enum named <code>State</code> that allows me to modularly
@@ -522,8 +522,8 @@ It also implements the <code>Display</code> trait to decrease repetition.
 </div>
 </div>
 </div>
-<div id="outline-container-org1b084e9" class="outline-3">
-<h3 id="org1b084e9"><span class="section-number-3">3.3.</span> hand.rs</h3>
+<div id="outline-container-orgbf862de" class="outline-3">
+<h3 id="orgbf862de"><span class="section-number-3">3.3.</span> hand.rs</h3>
 <div class="outline-text-3" id="text-3-3">
 <p>
 This file includes an enum named <code>Hand</code> that allows me to modularly and
@@ -595,8 +595,8 @@ sees if the first's beats the second's.</li>
 </div>
 </div>
 </div>
-<div id="outline-container-orge8d41f3" class="outline-3">
-<h3 id="orge8d41f3"><span class="section-number-3">3.4.</span> mode.rs</h3>
+<div id="outline-container-org0c516c7" class="outline-3">
+<h3 id="org0c516c7"><span class="section-number-3">3.4.</span> mode.rs</h3>
 <div class="outline-text-3" id="text-3-4">
 <p>
 This file includes an enum named <code>Mode</code> that allows me to modularly
@@ -788,8 +788,8 @@ available game modes.</li>
 </div>
 </div>
 </div>
-<div id="outline-container-orgaff9f36" class="outline-3">
-<h3 id="orgaff9f36"><span class="section-number-3">3.5.</span> lib.rs</h3>
+<div id="outline-container-org064cdcb" class="outline-3">
+<h3 id="org064cdcb"><span class="section-number-3">3.5.</span> lib.rs</h3>
 <div class="outline-text-3" id="text-3-5">
 <p>
 This file imports the modules defined above and re-exports the
@@ -809,8 +809,8 @@ them accessible throughout the rest of the project.
 </div>
 </div>
 </div>
-<div id="outline-container-orgeba257b" class="outline-3">
-<h3 id="orgeba257b"><span class="section-number-3">3.6.</span> main.rs</h3>
+<div id="outline-container-org6b5ad19" class="outline-3">
+<h3 id="org6b5ad19"><span class="section-number-3">3.6.</span> main.rs</h3>
 <div class="outline-text-3" id="text-3-6">
 <p>
 This is the main file of the project, meaning its contents determine
@@ -834,14 +834,9 @@ this program needs it.
 </div>
 </div>
 </div>
-<div id="outline-container-org3476031" class="outline-2">
-<h2 id="org3476031"><span class="section-number-2">4.</span> Demo</h2>
+<div id="outline-container-org1d4b407" class="outline-2">
+<h2 id="org1d4b407"><span class="section-number-2">4.</span> Demo</h2>
 <div class="outline-text-2" id="text-4">
-
-<div id="org899d20a" class="figure">
-<p><a href="https://asciinema.org/a/k60wr2aAmm1rqwYqC4Eid3onJ"><img src="https://asciinema.org/a/k60wr2aAmm1rqwYqC4Eid3onJ.svg" alt="k60wr2aAmm1rqwYqC4Eid3onJ.svg" class="org-svg" /></a>
-</p>
-</div>
 <script src="https://asciinema.org/a/k60wr2aAmm1rqwYqC4Eid3onJ.js" id="asciicast-k60wr2aAmm1rqwYqC4Eid3onJ" async="true"></script>
 </div>
 </div>
