@@ -1,0 +1,850 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Rock, Paper, Scissors&#x2026; Blazingly Fast in Rust</title>
+<meta name="generator" content="Org Mode" />
+<style type="text/css">
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<style type="text/css">
+:root {
+--bg: #1d2021;
+--bg1: #3c3836;
+--bg2: #504945;
+--bg3: #665c54;
+--fg: #ebdbb2;
+--fg1: #d5c4a1;
+--fg2: #bdae93;
+--red: #fb4934;
+--orange: #fe8019;
+--yellow: #fabd2f;
+--green: #b8bb26;
+--aqua: #8ec07c;
+--blue: #83a598;
+--purple: #d3869b;
+--brown: #d65d0e;
+}
+body {
+background-color: var(--bg);
+color: var(--fg);
+font-family: 'Geist Mono NerdFont', 'JetBrains Mono Nerd Font', 'Geist Mono', 'JetBrains Mono', 'Fira Code', 'Mamelon', 'Noto Sans CJK JP', 'Segoe UI Emoji', 'monospace';
+line-height: 1.6;
+padding: 2em;
+max-width: 80ch;
+margin: auto;
+}
+a {
+color: var(--blue);
+text-decoration: none;
+}
+a:hover {
+text-decoration: underline;
+}
+h1, h2, h3, h4, h5, h6 {
+color: var(--yellow);
+margin-top: 1.5em;
+}
+code, pre {
+background-color: var(--bg1);
+color: var(--fg);
+font-family: 'Fira Code', monospace;
+font-variant-ligatures: none;
+}
+pre {
+background-color: var(--bg1);
+padding: 1em;
+border-radius: 4px;
+overflow-x: auto;
+}
+.org-src-container {
+background-color: transparent;
+border-left: 1px solid var(--blue);
+padding: 1em;
+margin: 1em 0;
+border-radius: 4px;
+}
+.org-src-container span, pre span {
+background: transparent !important;
+}
+.org-src-container::-webkit-scrollbar,
+pre::-webkit-scrollbar {
+height: 8px;
+width: 8px;
+}
+.org-src-container::-webkit-scrollbar-track,
+pre::-webkit-scrollbar-track {
+background: var(--bg1);
+border-radius: 4px;
+}
+.org-src-container::-webkit-scrollbar-thumb,
+pre::-webkit-scrollbar-thumb {
+background-color: var(--bg3);
+border-radius: 4px;
+border: 2px solid var(--bg1);
+}
+.org-src-container::-webkit-scrollbar-thumb:hover,
+pre::-webkit-scrollbar-thumb:hover {
+background-color: var(--fg2);
+}
+.org-src-container,
+pre {
+scrollbar-width: thin;
+scrollbar-color: var(--bg3) var(--bg1);
+}
+blockquote {
+border-left: 2px solid var(--orange);
+padding-left: 1em;
+color: var(--fg1);
+font-style: italic;
+background-color: var(--bg1);
+margin: 1em 0;
+}
+table {
+border-collapse: collapse;
+width: 100%;
+margin: 1em 0;
+font-size: 0.95em;
+}
+th, td {
+border: 1px solid var(--bg3);
+padding: 0.5em;
+text-align: left;
+}
+th {
+background-color: var(--bg2);
+color: var(--yellow);
+}
+td {
+background-color: var(--bg1);
+}
+/* === Org-mode Extras === */
+.title {
+color: var(--orange);
+font-size: 2em;
+font-weight: bold;
+}
+.subtitle {
+color: var(--fg1);
+font-size: 0.5em;
+}
+.todo {
+color: var(--red);
+font-weight: bold;
+}
+.done {
+color: var(--green);
+font-weight: bold;
+}
+.tag {
+background-color: var(--bg2);
+color: var(--purple);
+padding: 0 0.5em;
+margin-left: 1em;
+border-radius: 3px;
+font-size: 0.9em;
+}
+.footpara, .footdef {
+font-size: 0.9em;
+color: var(--fg2);
+}
+hr {
+border: none;
+border-top: 1px solid var(--bg3);
+margin: 2em 0;
+}
+</style>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Rock, Paper, Scissors&#x2026; Blazingly Fast in Rust
+<br />
+<span class="subtitle">Because even hand games deserve zero-cost abstractions</span>
+</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org5072e6b">1. Installation</a>
+<ul>
+<li><a href="#org2437b66">1.1. Source</a></li>
+<li><a href="#orge5ee048">1.2. Nix</a></li>
+</ul>
+</li>
+<li><a href="#org4608039">2. Usage</a></li>
+<li><a href="#orga33ac77">3. The Code</a>
+<ul>
+<li><a href="#orga0fcdac">3.1. Cargo.toml</a></li>
+<li><a href="#org9269293">3.2. state.rs</a></li>
+<li><a href="#org1b084e9">3.3. hand.rs</a></li>
+<li><a href="#orge8d41f3">3.4. mode.rs</a></li>
+<li><a href="#orgaff9f36">3.5. lib.rs</a></li>
+<li><a href="#orgeba257b">3.6. main.rs</a></li>
+</ul>
+</li>
+<li><a href="#org3476031">4. Demo</a></li>
+</ul>
+</div>
+</div>
+<p>
+A minimal, feature-rich, blazingly fast CLI game. Otherwise known as:
+a wildly overbuilt Rock, Paper, Scissors.
+</p>
+
+<p>
+I get extra-credit for this right? 😭
+</p>
+<div id="outline-container-org5072e6b" class="outline-2">
+<h2 id="org5072e6b"><span class="section-number-2">1.</span> Installation</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org2437b66" class="outline-3">
+<h3 id="org2437b66"><span class="section-number-3">1.1.</span> Source</h3>
+<div class="outline-text-3" id="text-1-1">
+<ol class="org-ol">
+<li><p>
+Clone the git repository:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">git clone https://github.com/Elias-Ainsworth/rps-rs
+</pre>
+</div></li>
+
+<li><p>
+Enter the project directory and compile the program:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #fe8019;">cd</span> rps-rs
+cargo build --release
+</pre>
+</div></li>
+
+<li><p>
+Run the compiled binary:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #fe8019;">cd</span> target/release
+./rps-rs
+</pre>
+</div></li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orge5ee048" class="outline-3">
+<h3 id="orge5ee048"><span class="section-number-3">1.2.</span> Nix</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+If you have nix installed, you can run this program without any
+compilation with the following command:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">nix run github:Elias-Ainsworth/rps-rs
+</pre>
+</div>
+
+<p>
+To install it on your system just add the link to your flake input and
+add the exposed package to your <code>home.packages</code> or
+<code>environment.systemPackages</code> (please for the love of God, don't do
+this unless you really like installing bad cli games).
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org4608039" class="outline-2">
+<h2 id="org4608039"><span class="section-number-2">2.</span> Usage</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+After running the program using it is pretty intuitive. You're
+presented with a menu to select from the following game modes:
+</p>
+<ol class="org-ol">
+<li>Single: One round of Rock, Paper, Scissors</li>
+<li>Best of 3</li>
+<li>Best of 5</li>
+<li>Best of 7</li>
+</ol>
+<p>
+After which you can play the game by inputting your pick of the
+three when prompted and you are then presented with a score-board
+of the results after each round&#x2026;honestly nothing special.
+</p>
+</div>
+</div>
+<div id="outline-container-orga33ac77" class="outline-2">
+<h2 id="orga33ac77"><span class="section-number-2">3.</span> The Code</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-orga0fcdac" class="outline-3">
+<h3 id="orga0fcdac"><span class="section-number-3">3.1.</span> Cargo.toml</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+Rust's package manager is Cargo and in this assignment I used a total
+of 2 crates:
+</p>
+<ol class="org-ol">
+<li>rand: For random number generation.</li>
+<li>colored: To make things look pretty with colors.</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-toml">[<span style="color: #d3869b;">package</span>]
+<span style="color: #83a598;">name</span> = <span style="color: #b8bb26;">"rps-rs"</span>
+<span style="color: #83a598;">version</span> = <span style="color: #b8bb26;">"0.1.0"</span>
+<span style="color: #83a598;">edition</span> = <span style="color: #b8bb26;">"2024"</span>
+
+[<span style="color: #d3869b;">dependencies</span>]
+<span style="color: #83a598;">colored</span> = <span style="color: #b8bb26;">"3.0.0"</span>
+<span style="color: #83a598;">rand</span> = <span style="color: #b8bb26;">"0.9.1"</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org9269293" class="outline-3">
+<h3 id="org9269293"><span class="section-number-3">3.2.</span> state.rs</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+This file includes an enum named <code>State</code> that allows me to modularly
+and idiomatically get and manage the state of the game.
+</p>
+
+<p>
+It also implements the <code>Display</code> trait to decrease repetition.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #fb4933;">use</span> <span style="color: #d3869b;">std</span>::<span style="color: #d3869b;">fmt</span>::{<span style="color: #fb4933;">self</span>, <span style="color: #d3869b;">Display</span>};
+
+<span style="color: #fb4933;">pub</span> <span style="color: #fb4933;">enum</span> <span style="color: #d3869b;">State</span> {
+    <span style="color: #d3869b;">Win</span>,
+    <span style="color: #d3869b;">Loss</span>,
+    <span style="color: #d3869b;">Tie</span>,
+}
+
+<span style="color: #fb4933;">impl</span> <span style="color: #d3869b;">Display</span> <span style="color: #fb4933;">for</span> <span style="color: #d3869b;">State</span> {
+    <span style="color: #fb4933;">fn</span> <span style="color: #fabd2f;">fmt</span>(<span style="color: #ebdbb2; background-color: #141416;">&amp;</span><span style="color: #fb4933;">self</span>, <span style="color: #83a598;">f</span>: <span style="color: #ebdbb2; background-color: #141416;">&amp;</span><span style="color: #fb4933;">mut</span> <span style="color: #d3869b;">fmt</span>::<span style="color: #d3869b;">Formatter</span>) -&gt; <span style="color: #d3869b;">fmt</span>::<span style="color: #d3869b;">Result</span> {
+        <span style="color: #fb4933;">match</span> <span style="color: #fb4933;">self</span> {
+            <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Win</span> =&gt; <span style="color: #fe8019;">write!</span>(f, <span style="color: #b8bb26;">"You Win!"</span>),
+            <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Loss</span> =&gt; <span style="color: #fe8019;">write!</span>(f, <span style="color: #b8bb26;">"You Lose!"</span>),
+            <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Tie</span> =&gt; <span style="color: #fe8019;">write!</span>(f, <span style="color: #b8bb26;">"It's a Tie!"</span>),
+        }
+    }
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org1b084e9" class="outline-3">
+<h3 id="org1b084e9"><span class="section-number-3">3.3.</span> hand.rs</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+This file includes an enum named <code>Hand</code> that allows me to modularly and
+idiomatically get and manage the hand (rock, paper, or scissors).
+</p>
+
+<p>
+It also implements the <code>Display</code> trait to decrease repetition, and
+custom functions:
+</p>
+<ol class="org-ol">
+<li><code>random</code>: Generates a random hand, by generating a random number in
+the range 1 to 3 inclusive of 3 and assigning each value to a
+respective hand.</li>
+<li><code>from_input</code>: Takes a string slice as an input and pattern matches
+rock, paper, and scissors to their respective enum variants.</li>
+<li><code>beats</code>: Takes two hands (the players hand and the computers) and
+sees if the first's beats the second's.</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #fb4933;">use</span> <span style="color: #d3869b;">std</span>::<span style="color: #d3869b;">fmt</span>::{<span style="color: #fb4933;">self</span>, <span style="color: #d3869b;">Display</span>};
+
+<span style="color: #fb4933;">use</span> <span style="color: #d3869b;">rand</span>::<span style="color: #d3869b;">Rng</span>;
+
+<span style="color: #fe8019;">#[derive(Debug, PartialEq, Eq)]</span>
+<span style="color: #fb4933;">pub</span> <span style="color: #fb4933;">enum</span> <span style="color: #d3869b;">Hand</span> {
+    <span style="color: #d3869b;">Rock</span>,
+    <span style="color: #d3869b;">Paper</span>,
+    <span style="color: #d3869b;">Scissors</span>,
+}
+
+<span style="color: #fb4933;">impl</span> <span style="color: #d3869b;">Display</span> <span style="color: #fb4933;">for</span> <span style="color: #d3869b;">Hand</span> {
+    <span style="color: #fb4933;">fn</span> <span style="color: #fabd2f;">fmt</span>(<span style="color: #ebdbb2; background-color: #141416;">&amp;</span><span style="color: #fb4933;">self</span>, <span style="color: #83a598;">f</span>: <span style="color: #ebdbb2; background-color: #141416;">&amp;</span><span style="color: #fb4933;">mut</span> <span style="color: #d3869b;">fmt</span>::<span style="color: #d3869b;">Formatter</span>) -&gt; <span style="color: #d3869b;">fmt</span>::<span style="color: #d3869b;">Result</span> {
+        <span style="color: #fb4933;">match</span> <span style="color: #fb4933;">self</span> {
+            <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Rock</span> =&gt; <span style="color: #fe8019;">write!</span>(f, <span style="color: #b8bb26;">"rock"</span>),
+            <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Paper</span> =&gt; <span style="color: #fe8019;">write!</span>(f, <span style="color: #b8bb26;">"paper"</span>),
+            <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Scissors</span> =&gt; <span style="color: #fe8019;">write!</span>(f, <span style="color: #b8bb26;">"scissors"</span>),
+        }
+    }
+}
+
+<span style="color: #fb4933;">impl</span> <span style="color: #d3869b;">Hand</span> {
+    <span style="color: #fb4933;">pub</span> <span style="color: #fb4933;">fn</span> <span style="color: #fabd2f;">random</span>() -&gt; <span style="color: #d3869b;">Self</span> {
+        <span style="color: #fb4933;">match</span> <span style="color: #d3869b;">rand</span>::rng().random_range(1..=3) {
+            1 =&gt; <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Rock</span>,
+            2 =&gt; <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Paper</span>,
+            _ =&gt; <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Scissors</span>,
+        }
+    }
+    <span style="color: #fb4933;">pub</span> <span style="color: #fb4933;">fn</span> <span style="color: #fabd2f;">from_input</span>(<span style="color: #83a598;">input</span>: <span style="color: #ebdbb2; background-color: #141416;">&amp;</span><span style="color: #d3869b;">str</span>) -&gt; <span style="color: #d3869b;">Option</span>&lt;<span style="color: #d3869b;">Self</span>&gt; {
+        <span style="color: #fb4933;">match</span> input.trim().to_lowercase().as_str() {
+            <span style="color: #b8bb26;">"rock"</span> =&gt; <span style="color: #d3869b;">Some</span>(<span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Rock</span>),
+            <span style="color: #b8bb26;">"paper"</span> =&gt; <span style="color: #d3869b;">Some</span>(<span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Paper</span>),
+            <span style="color: #b8bb26;">"scissors"</span> =&gt; <span style="color: #d3869b;">Some</span>(<span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Scissors</span>),
+            _ =&gt; <span style="color: #d3869b;">None</span>,
+        }
+    }
+    <span style="color: #fb4933;">pub</span> <span style="color: #fb4933;">fn</span> <span style="color: #fabd2f;">beats</span>(<span style="color: #ebdbb2; background-color: #141416;">&amp;</span><span style="color: #fb4933;">self</span>, <span style="color: #83a598;">other</span>: <span style="color: #ebdbb2; background-color: #141416;">&amp;</span><span style="color: #d3869b;">Self</span>) -&gt; <span style="color: #d3869b;">bool</span> {
+        <span style="color: #fe8019;">matches!</span>(
+            (<span style="color: #fb4933;">self</span>, other),
+            (<span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Rock</span>, <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Scissors</span>)
+                | (<span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Scissors</span>, <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Paper</span>)
+                | (<span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Paper</span>, <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Rock</span>)
+        )
+    }
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orge8d41f3" class="outline-3">
+<h3 id="orge8d41f3"><span class="section-number-3">3.4.</span> mode.rs</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+This file includes an enum named <code>Mode</code> that allows me to modularly
+and idiomatically get and manage the hand (rock, paper, or scissors).
+</p>
+
+<p>
+It also implements custom functions:
+</p>
+<ol class="org-ol">
+<li><code>max_rounds</code>: Pattern matches the max numbers of rounds per mode
+based off of the <code>Mode</code> variant provided.</li>
+<li><code>required_rounds</code>: Uses the output of <code>max_rounds</code> to calculate the
+required number of rounds to win the game.</li>
+<li><code>final_state</code>: Determines the final state of the game based
+<code>player_wins</code>, <code>computer_wins</code>, and <code>rounds_played</code>.</li>
+<li><code>play_rounds</code>: Loops through the number of times required based on
+the selected game mode. It does break if <code>player_wins</code> or
+<code>computer_wins</code> are greater than or equal to the <code>required</code> amount
+of wins.</li>
+<li><code>prompt_mode</code>: Prints an interactive prompt to choose between the
+available game modes.</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #fb4933;">use</span> <span style="color: #d3869b;">std</span>::<span style="color: #d3869b;">io</span>::{<span style="color: #fb4933;">self</span>, <span style="color: #d3869b;">Write</span>};
+
+<span style="color: #fb4933;">use</span> <span style="color: #d3869b;">colored</span>::<span style="color: #d3869b;">Colorize</span>;
+
+<span style="color: #fb4933;">use</span> <span style="color: #fb4933;">crate</span>::{<span style="color: #d3869b;">Hand</span>, <span style="color: #d3869b;">State</span>};
+
+<span style="color: #fb4933;">pub</span> <span style="color: #fb4933;">enum</span> <span style="color: #d3869b;">Mode</span> {
+    <span style="color: #d3869b;">Single</span>,
+    <span style="color: #d3869b;">BestOf3</span>,
+    <span style="color: #d3869b;">BestOf5</span>,
+    <span style="color: #d3869b;">BestOf7</span>,
+}
+
+<span style="color: #fb4933;">impl</span> <span style="color: #d3869b;">Mode</span> {
+    <span style="color: #fb4933;">pub</span> <span style="color: #fb4933;">fn</span> <span style="color: #fabd2f;">max_rounds</span>(<span style="color: #ebdbb2; background-color: #141416;">&amp;</span><span style="color: #fb4933;">self</span>) -&gt; <span style="color: #d3869b;">u8</span> {
+        <span style="color: #fb4933;">match</span> <span style="color: #fb4933;">self</span> {
+            <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Single</span> =&gt; 1,
+            <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">BestOf3</span> =&gt; 3,
+            <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">BestOf5</span> =&gt; 5,
+            <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">BestOf7</span> =&gt; 7,
+        }
+    }
+    <span style="color: #fb4933;">pub</span> <span style="color: #fb4933;">fn</span> <span style="color: #fabd2f;">required_wins</span>(<span style="color: #ebdbb2; background-color: #141416;">&amp;</span><span style="color: #fb4933;">self</span>) -&gt; <span style="color: #d3869b;">u8</span> {
+        (<span style="color: #fb4933;">self</span>.max_rounds() / 2) + 1
+    }
+    <span style="color: #fb4933;">pub</span> <span style="color: #fb4933;">fn</span> <span style="color: #fabd2f;">final_state</span>(
+        <span style="color: #ebdbb2; background-color: #141416;">&amp;</span><span style="color: #fb4933;">self</span>,
+        <span style="color: #83a598;">player_wins</span>: <span style="color: #d3869b;">u8</span>,
+        <span style="color: #83a598;">computer_wins</span>: <span style="color: #d3869b;">u8</span>,
+        <span style="color: #83a598;">rounds_played</span>: <span style="color: #d3869b;">u8</span>,
+    ) -&gt; <span style="color: #d3869b;">Option</span>&lt;<span style="color: #d3869b;">State</span>&gt; {
+        <span style="color: #fb4933;">let</span> <span style="color: #83a598;">max</span> = <span style="color: #fb4933;">self</span>.max_rounds();
+        <span style="color: #fb4933;">let</span> <span style="color: #83a598;">required</span> = <span style="color: #fb4933;">self</span>.required_wins();
+
+        <span style="color: #fb4933;">if</span> player_wins &gt;= required {
+            <span style="color: #d3869b;">Some</span>(<span style="color: #d3869b;">State</span>::<span style="color: #d3869b;">Win</span>)
+        } <span style="color: #fb4933;">else</span> <span style="color: #fb4933;">if</span> computer_wins &gt;= required {
+            <span style="color: #d3869b;">Some</span>(<span style="color: #d3869b;">State</span>::<span style="color: #d3869b;">Loss</span>)
+        } <span style="color: #fb4933;">else</span> <span style="color: #fb4933;">if</span> rounds_played &gt;= max {
+            <span style="color: #fb4933;">if</span> player_wins &gt; computer_wins {
+                <span style="color: #d3869b;">Some</span>(<span style="color: #d3869b;">State</span>::<span style="color: #d3869b;">Win</span>)
+            } <span style="color: #fb4933;">else</span> <span style="color: #fb4933;">if</span> computer_wins &gt; player_wins {
+                <span style="color: #d3869b;">Some</span>(<span style="color: #d3869b;">State</span>::<span style="color: #d3869b;">Loss</span>)
+            } <span style="color: #fb4933;">else</span> {
+                <span style="color: #d3869b;">Some</span>(<span style="color: #d3869b;">State</span>::<span style="color: #d3869b;">Tie</span>)
+            }
+        } <span style="color: #fb4933;">else</span> {
+            <span style="color: #d3869b;">None</span>
+        }
+    }
+    <span style="color: #fb4933;">pub</span> <span style="color: #fb4933;">fn</span> <span style="color: #fabd2f;">play_rounds</span>(<span style="color: #ebdbb2; background-color: #141416;">&amp;</span><span style="color: #fb4933;">self</span>) -&gt; <span style="color: #d3869b;">Result</span>&lt;(), <span style="color: #d3869b;">Box</span>&lt;<span style="color: #fb4933;">dyn</span> <span style="color: #d3869b;">std</span>::<span style="color: #d3869b;">error</span>::<span style="color: #d3869b;">Error</span>&gt;&gt; {
+        <span style="color: #fb4933;">let</span> <span style="color: #fb4933;">mut</span> <span style="color: #83a598;">player_wins</span>: <span style="color: #d3869b;">u8</span> = 0;
+        <span style="color: #fb4933;">let</span> <span style="color: #fb4933;">mut</span> <span style="color: #83a598;">computer_wins</span>: <span style="color: #d3869b;">u8</span> = 0;
+        <span style="color: #fb4933;">let</span> <span style="color: #fb4933;">mut</span> <span style="color: #83a598;">rounds_played</span>: <span style="color: #d3869b;">u8</span> = 0;
+        <span style="color: #fb4933;">let</span> <span style="color: #fb4933;">mut</span> <span style="color: #83a598;">ties</span>: <span style="color: #d3869b;">u8</span> = 0;
+
+        <span style="color: #fb4933;">loop</span> {
+            <span style="color: #fe8019;">print!</span>(<span style="color: #b8bb26;">"Rock, Paper, Scissors...GO! "</span>);
+            <span style="color: #d3869b;">io</span>::stdout().flush()<span style="color: #fe8019; font-weight: bold;">?</span>;
+
+            <span style="color: #fb4933;">let</span> <span style="color: #fb4933;">mut</span> <span style="color: #83a598;">input</span> = <span style="color: #d3869b;">String</span>::new();
+            <span style="color: #d3869b;">io</span>::stdin().read_line(<span style="color: #ebdbb2; background-color: #141416;">&amp;</span><span style="color: #fb4933;">mut</span> input)<span style="color: #fe8019; font-weight: bold;">?</span>;
+            <span style="color: #fb4933;">let</span> <span style="color: #83a598;">player</span> = <span style="color: #fb4933;">match</span> <span style="color: #d3869b;">Hand</span>::from_input(<span style="color: #ebdbb2; background-color: #141416;">&amp;</span>input) {
+                <span style="color: #d3869b;">Some</span>(hand) =&gt; hand,
+                <span style="color: #d3869b;">None</span> =&gt; {
+                    <span style="color: #fe8019;">println!</span>();
+                    <span style="color: #fe8019;">println!</span>(
+                        <span style="color: #b8bb26;">"</span><span style="color: #b8bb26; font-style: italic;">{}</span><span style="color: #b8bb26;">"</span>,
+                        <span style="color: #b8bb26;">"Invalid hand. Try rock, paper, or scissors."</span>.red().bold()
+                    );
+                    <span style="color: #fe8019;">println!</span>();
+                    <span style="color: #fb4933;">continue</span>;
+                }
+            };
+
+            <span style="color: #fb4933;">let</span> <span style="color: #83a598;">computer</span> = <span style="color: #d3869b;">Hand</span>::random();
+
+            <span style="color: #fe8019;">println!</span>();
+            <span style="color: #fe8019;">println!</span>(<span style="color: #b8bb26;">"Your choice: </span><span style="color: #b8bb26; font-style: italic;">{}</span><span style="color: #b8bb26;">"</span>, player.to_string().blue().bold());
+            <span style="color: #fe8019;">println!</span>(
+                <span style="color: #b8bb26;">"Computer's choice: </span><span style="color: #b8bb26; font-style: italic;">{}</span><span style="color: #b8bb26;">"</span>,
+                computer.to_string().magenta().bold()
+            );
+            <span style="color: #fe8019;">println!</span>();
+
+            rounds_played += 1;
+
+            <span style="color: #fb4933;">if</span> player == computer {
+                ties += 1;
+            } <span style="color: #fb4933;">else</span> <span style="color: #fb4933;">if</span> player.beats(<span style="color: #ebdbb2; background-color: #141416;">&amp;</span>computer) {
+                player_wins += 1;
+            } <span style="color: #fb4933;">else</span> {
+                computer_wins += 1;
+            }
+            <span style="color: #fe8019;">println!</span>(
+                <span style="color: #b8bb26;">"Round </span><span style="color: #b8bb26; font-style: italic;">{}</span><span style="color: #b8bb26;">:\n| Player: </span><span style="color: #b8bb26; font-style: italic;">{}</span><span style="color: #b8bb26;"> | Computer: </span><span style="color: #b8bb26; font-style: italic;">{}</span><span style="color: #b8bb26;"> | Ties: </span><span style="color: #b8bb26; font-style: italic;">{}</span><span style="color: #b8bb26;"> |"</span>,
+                rounds_played.to_string().cyan(),
+                player_wins.to_string().green(),
+                computer_wins.to_string().red(),
+                ties.to_string().yellow()
+            );
+            <span style="color: #fe8019;">println!</span>();
+            <span style="color: #fe8019;">println!</span>(<span style="color: #b8bb26;">"---------------------"</span>);
+            <span style="color: #fe8019;">println!</span>();
+
+            <span style="color: #fb4933;">if</span> <span style="color: #fb4933;">let</span> <span style="color: #d3869b;">Some</span>(state) = <span style="color: #fb4933;">self</span>.final_state(player_wins, computer_wins, rounds_played) {
+                <span style="color: #fb4933;">match</span> state {
+                    <span style="color: #d3869b;">State</span>::<span style="color: #d3869b;">Win</span> =&gt; {
+                        <span style="color: #fe8019;">println!</span>(
+                            <span style="color: #b8bb26;">"</span><span style="color: #b8bb26; font-style: italic;">{}</span><span style="color: #b8bb26;"> </span><span style="color: #b8bb26; font-style: italic;">{}</span><span style="color: #b8bb26;">"</span>,
+                            <span style="color: #b8bb26;">"GAME OVER"</span>.bold().black().on_green(),
+                            state.to_string().green().bold()
+                        )
+                    }
+                    <span style="color: #d3869b;">State</span>::<span style="color: #d3869b;">Loss</span> =&gt; <span style="color: #fe8019;">println!</span>(
+                        <span style="color: #b8bb26;">"</span><span style="color: #b8bb26; font-style: italic;">{}</span><span style="color: #b8bb26;"> </span><span style="color: #b8bb26; font-style: italic;">{}</span><span style="color: #b8bb26;">"</span>,
+                        <span style="color: #b8bb26;">"GAME OVER"</span>.bold().black().on_red(),
+                        state.to_string().red().bold()
+                    ),
+                    <span style="color: #d3869b;">State</span>::<span style="color: #d3869b;">Tie</span> =&gt; {
+                        <span style="color: #fe8019;">println!</span>(
+                            <span style="color: #b8bb26;">"</span><span style="color: #b8bb26; font-style: italic;">{}</span><span style="color: #b8bb26;"> </span><span style="color: #b8bb26; font-style: italic;">{}</span><span style="color: #b8bb26;">"</span>,
+                            <span style="color: #b8bb26;">"GAME OVER"</span>.bold().black().on_yellow(),
+                            state.to_string().yellow().bold()
+                        )
+                    }
+                }
+                <span style="color: #fb4933;">break</span>;
+            }
+        }
+        <span style="color: #d3869b;">Ok</span>(())
+    }
+    <span style="color: #fb4933;">pub</span> <span style="color: #fb4933;">fn</span> <span style="color: #fabd2f;">prompt_mode</span>() -&gt; <span style="color: #d3869b;">Result</span>&lt;<span style="color: #d3869b;">Self</span>, <span style="color: #d3869b;">Box</span>&lt;<span style="color: #fb4933;">dyn</span> <span style="color: #d3869b;">std</span>::<span style="color: #d3869b;">error</span>::<span style="color: #d3869b;">Error</span>&gt;&gt; {
+        <span style="color: #fe8019;">println!</span>(
+            <span style="color: #b8bb26;">"</span><span style="color: #b8bb26; font-style: italic;">{}</span><span style="color: #b8bb26;">"</span>,
+            <span style="color: #b8bb26;">r#"Select Game Mode:</span>
+<span style="color: #b8bb26;">                1) Single</span>
+<span style="color: #b8bb26;">                2) Best of 3</span>
+<span style="color: #b8bb26;">                3) Best of 5</span>
+<span style="color: #b8bb26;">                4) Best of 7"#</span>
+        );
+
+        <span style="color: #fe8019;">print!</span>(<span style="color: #b8bb26;">"</span><span style="color: #b8bb26; font-style: italic;">{}</span><span style="color: #b8bb26;">"</span>, <span style="color: #b8bb26;">"Mode: "</span>);
+        <span style="color: #d3869b;">io</span>::stdout().flush()<span style="color: #fe8019; font-weight: bold;">?</span>;
+
+        <span style="color: #fb4933;">let</span> <span style="color: #fb4933;">mut</span> <span style="color: #83a598;">input</span> = <span style="color: #d3869b;">String</span>::new();
+        <span style="color: #d3869b;">io</span>::stdin().read_line(<span style="color: #ebdbb2; background-color: #141416;">&amp;</span><span style="color: #fb4933;">mut</span> input)<span style="color: #fe8019; font-weight: bold;">?</span>;
+        <span style="color: #fb4933;">let</span> <span style="color: #83a598;">mode</span>: <span style="color: #d3869b;">Self</span> = <span style="color: #fb4933;">match</span> input.trim() {
+            <span style="color: #b8bb26;">"1"</span> =&gt; <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">Single</span>,
+            <span style="color: #b8bb26;">"2"</span> =&gt; <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">BestOf3</span>,
+            <span style="color: #b8bb26;">"3"</span> =&gt; <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">BestOf5</span>,
+            <span style="color: #b8bb26;">"4"</span> =&gt; <span style="color: #d3869b;">Self</span>::<span style="color: #d3869b;">BestOf7</span>,
+            _ =&gt; <span style="color: #fb4933;">return</span> <span style="color: #d3869b;">Err</span>(<span style="color: #b8bb26;">"Invalid input"</span>.into()),
+        };
+
+        <span style="color: #fe8019;">println!</span>();
+        <span style="color: #fe8019;">println!</span>(<span style="color: #b8bb26;">"---------------------"</span>);
+        <span style="color: #fe8019;">println!</span>();
+
+        <span style="color: #d3869b;">Ok</span>(mode)
+    }
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgaff9f36" class="outline-3">
+<h3 id="orgaff9f36"><span class="section-number-3">3.5.</span> lib.rs</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+This file imports the modules defined above and re-exports the
+necessary enums along with their associated implementations, making
+them accessible throughout the rest of the project.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #fb4933;">pub</span> <span style="color: #fb4933;">mod</span> <span style="color: #d3869b;">hand</span>;
+<span style="color: #fb4933;">pub</span> <span style="color: #fb4933;">mod</span> <span style="color: #d3869b;">mode</span>;
+<span style="color: #fb4933;">pub</span> <span style="color: #fb4933;">mod</span> <span style="color: #d3869b;">state</span>;
+
+<span style="color: #fb4933;">pub</span> <span style="color: #fb4933;">use</span> <span style="color: #d3869b;">hand</span>::<span style="color: #d3869b;">Hand</span>;
+<span style="color: #fb4933;">pub</span> <span style="color: #fb4933;">use</span> <span style="color: #d3869b;">mode</span>::<span style="color: #d3869b;">Mode</span>;
+<span style="color: #fb4933;">pub</span> <span style="color: #fb4933;">use</span> <span style="color: #d3869b;">state</span>::<span style="color: #d3869b;">State</span>;
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgeba257b" class="outline-3">
+<h3 id="orgeba257b"><span class="section-number-3">3.6.</span> main.rs</h3>
+<div class="outline-text-3" id="text-3-6">
+<p>
+This is the main file of the project, meaning its contents determine
+the entry point and what gets compiled and executed.
+It is short and sweet by design in order to improve readability, and
+to stick to <code>DRY</code> (Don't Repeat Yourself), hence the numerous
+abstractions that provide for scalability in the long haul -not that
+this program needs it.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #fb4933;">use</span> <span style="color: #d3869b;">rps_rs</span>::<span style="color: #d3869b;">Mode</span>;
+
+<span style="color: #fb4933;">fn</span> <span style="color: #fabd2f;">main</span>() -&gt; <span style="color: #d3869b;">Result</span>&lt;(), <span style="color: #d3869b;">Box</span>&lt;<span style="color: #fb4933;">dyn</span> <span style="color: #d3869b;">std</span>::<span style="color: #d3869b;">error</span>::<span style="color: #d3869b;">Error</span>&gt;&gt; {
+    <span style="color: #fb4933;">let</span> <span style="color: #83a598;">mode</span> = <span style="color: #d3869b;">Mode</span>::prompt_mode()<span style="color: #fe8019; font-weight: bold;">?</span>;
+    mode.play_rounds()<span style="color: #fe8019; font-weight: bold;">?</span>;
+    <span style="color: #d3869b;">Ok</span>(())
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org3476031" class="outline-2">
+<h2 id="org3476031"><span class="section-number-2">4.</span> Demo</h2>
+<div class="outline-text-2" id="text-4">
+
+<div id="org899d20a" class="figure">
+<p><a href="https://asciinema.org/a/k60wr2aAmm1rqwYqC4Eid3onJ"><img src="https://asciinema.org/a/k60wr2aAmm1rqwYqC4Eid3onJ.svg" alt="k60wr2aAmm1rqwYqC4Eid3onJ.svg" class="org-svg" /></a>
+</p>
+</div>
+<script src="https://asciinema.org/a/k60wr2aAmm1rqwYqC4Eid3onJ.js" id="asciicast-k60wr2aAmm1rqwYqC4Eid3onJ" async="true"></script>
+</div>
+</div>
+</div>
+</body>
+</html>
