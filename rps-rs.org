@@ -1,9 +1,10 @@
 #+title: Rock, Paper, Scissors... Blazingly Fast in Rust
 #+subtitle: Because even hand games deserve zero-cost abstractions
-#+author: Your Name
-#+description: A minimal yet mighty rock-paper-scissors CLI game written in safe, fast, and fearless Rust.
 
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="./assets/gruvbox-dark.css"/>
+
+A minimal, feature-rich, blazingly fast CLI game. Otherwise known as:
+a wildly overbuilt Rock, Paper, Scissors.
 
 * Installation
 ** Source

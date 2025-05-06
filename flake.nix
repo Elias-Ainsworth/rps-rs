@@ -33,14 +33,14 @@
           pname = "rps-rs";
           version = "0.0.0";
 
-          src = ./.; # assumes Cargo.toml is here
+          src = ./.;
 
           cargoLock = {
             lockFile = ./Cargo.lock;
           };
 
           meta = with pkgs.lib; {
-            description = "A simple rock paper scissors game written in rust.";
+            description = "A minimal, feature-rich, blazingly fast CLI game. Otherwise known as: a wildly overbuilt Rock, Paper, Scissors.";
             license = licenses.mit;
             maintainers = [ lib.maintainers.elias-ainsworth ];
             platforms = platforms.all;
