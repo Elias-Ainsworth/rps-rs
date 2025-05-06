@@ -378,8 +378,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 * Demo
 
-#+begin_comment
-[![asciicast](https://asciinema.org/a/k60wr2aAmm1rqwYqC4Eid3onJ.svg)](https://asciinema.org/a/k60wr2aAmm1rqwYqC4Eid3onJ)
-#+end_comment
+#+CAPTION: Asciinema Cast Preview
+[[https://asciinema.org/a/k60wr2aAmm1rqwYqC4Eid3onJ.svg]]
+[[https://asciinema.org/a/k60wr2aAmm1rqwYqC4Eid3onJ][Watch on asciinema.org]]
 
 #+HTML: <script src="https://asciinema.org/a/k60wr2aAmm1rqwYqC4Eid3onJ.js" id="asciicast-k60wr2aAmm1rqwYqC4Eid3onJ" async="true"></script>
